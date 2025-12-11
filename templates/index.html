@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Cassava Leaf Disease Classification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d5a27;
+            --light-green: #4a7c43;
+            --accent-green: #8bc34a;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+        
+        .upload-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .upload-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .upload-zone {
+            border: 3px dashed var(--accent-green);
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fff8;
+        }
+        
+        .upload-zone:hover {
+            border-color: var(--primary-green);
+            background: #f0fff0;
+        }
+        
+        .upload-zone.dragover {
+            border-color: var(--primary-green);
+            background: #e8ffe8;
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+        
+        .btn-predict {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-predict:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(45, 90, 39, 0.4);
+        }
+        
+        .result-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .disease-badge {
+            font-size: 1.5rem;
+            padding: 10px 25px;
+            border-radius: 50px;
+        }
+        
+        .disease-healthy {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+        }
+        
+        .disease-infected {
+            background: linear-gradient(135deg, #ff5722 0%, #ff9800 100%);
+        }
+        
+        .confidence-bar {
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #e0e0e0;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 1s ease;
+        }
+        
+        .preview-image {
+            max-height: 300px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .probability-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .classes-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .class-item {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .class-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        footer {
+            background: var(--primary-green);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf me-2"></i>Cassava Disease Classifier
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link active" href="/"><i class="fas fa-home me-1"></i>Home</a>
+                    <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+                    <a class="nav-link" href="/about"><i class="fas fa-info-circle me-1"></i>About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-leaf me-3"></i>Cassava Leaf Disease Classification
+            </h1>
+            <p class="lead mb-0">
+                Upload an image of a cassava leaf to detect diseases using AI
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Upload Card -->
+                <div class="card upload-card mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-upload me-2 text-success"></i>Upload Image
+                        </h4>
+                        
+                        <div class="upload-zone" id="uploadZone">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <h5>Drag & Drop your image here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <p class="small text-muted">Supported formats: PNG, JPG, JPEG</p>
+                            <input type="file" id="fileInput" accept="image/*" hidden>
+                        </div>
+                        
+                        <!-- Preview -->
+                        <div id="previewContainer" class="text-center mt-4" style="display: none;">
+                            <img id="previewImage" class="preview-image img-fluid" alt="Preview">
+                            <div class="mt-3">
+                                <button class="btn btn-predict btn-lg text-white" id="predictBtn">
+                                    <i class="fas fa-search me-2"></i>Analyze Image
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading -->
+                        <div class="loading-spinner text-center mt-4" id="loadingSpinner">
+                            <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Analyzing image...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Card -->
+                <div class="card result-card" id="resultCard" style="display: none;">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-chart-bar me-2 text-success"></i>Analysis Results
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-5 text-center mb-4">
+                                <img id="resultImage" class="preview-image img-fluid" alt="Analyzed Image">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="text-center mb-4">
+                                    <span class="badge disease-badge text-white" id="resultBadge">
+                                        <i class="fas fa-leaf me-2"></i><span id="resultClass"></span>
+                                    </span>
+                                </div>
+                                
+                                <h5 id="resultName" class="text-center mb-3"></h5>
+                                <p id="resultDescription" class="text-muted text-center mb-4"></p>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <strong>Confidence</strong>
+                                        <span id="confidenceValue">0%</span>
+                                    </div>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill bg-success" id="confidenceBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- All Probabilities -->
+                        <hr>
+                        <h5 class="mb-3"><i class="fas fa-list me-2"></i>All Class Probabilities</h5>
+                        <div id="probabilitiesContainer"></div>
+                        
+                        <!-- Try Another -->
+                        <div class="text-center mt-4">
+                            <button class="btn btn-outline-success btn-lg" id="resetBtn">
+                                <i class="fas fa-redo me-2"></i>Analyze Another Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disease Classes Info -->
+                <div class="classes-info">
+                    <h4 class="mb-4"><i class="fas fa-info-circle me-2 text-success"></i>Disease Classes</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="class-item bg-danger bg-opacity-10">
+                                <strong><i class="fas fa-virus me-2 text-danger"></i>CBB</strong>
+                                <p class="mb-0 small text-muted">Cassava Bacterial Blight</p>
+                            </div>
+                            <div class="class-item bg-warning bg-opacity-10">
+                                <strong><i class="fas fa-virus me-2 text-warning"></i>CBSD</strong>
+                                <p class="mb-0 small text-muted">Cassava Brown Streak Disease</p>
+                            </div>
+                            <div class="class-item bg-info bg-opacity-10">
+                                <strong><i class="fas fa-virus me-2 text-info"></i>CGM</strong>
+                                <p class="mb-0 small text-muted">Cassava Green Mottle</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="class-item bg-primary bg-opacity-10">
+                                <strong><i class="fas fa-virus me-2 text-primary"></i>CMD</strong>
+                                <p class="mb-0 small text-muted">Cassava Mosaic Disease</p>
+                            </div>
+                            <div class="class-item bg-success bg-opacity-10">
+                                <strong><i class="fas fa-check-circle me-2 text-success"></i>Healthy</strong>
+                                <p class="mb-0 small text-muted">No visible disease symptoms</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-leaf me-2"></i>Cassava Leaf Disease Classification
+            </p>
+            <small>Powered by PyTorch & MobileNetV2</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // DOM Elements
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const predictBtn = document.getElementById('predictBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const resultCard = document.getElementById('resultCard');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        let selectedFile = null;
+
+        // Upload Zone Click
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        // File Input Change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Drag and Drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Handle File
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file.');
+                return;
+            }
+            
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                resultCard.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Predict Button
+        predictBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            predictBtn.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+            
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+                console.error(error);
+            } finally {
+                loadingSpinner.style.display = 'none';
+                predictBtn.style.display = 'inline-block';
+            }
+        });
+
+        // Display Results
+        function displayResults(data) {
+            const pred = data.prediction;
+            
+            // Set image
+            document.getElementById('resultImage').src = data.image;
+            
+            // Set class and badge
+            document.getElementById('resultClass').textContent = pred.class;
+            document.getElementById('resultName').textContent = pred.class_name;
+            document.getElementById('resultDescription').textContent = pred.description;
+            
+            const badge = document.getElementById('resultBadge');
+            badge.className = 'badge disease-badge text-white ' + 
+                (pred.class === 'Healthy' ? 'disease-healthy' : 'disease-infected');
+            
+            // Set confidence
+            document.getElementById('confidenceValue').textContent = pred.confidence.toFixed(2) + '%';
+            document.getElementById('confidenceBar').style.width = pred.confidence + '%';
+            
+            // Set probabilities
+            const probContainer = document.getElementById('probabilitiesContainer');
+            probContainer.innerHTML = '';
+            
+            // Sort probabilities
+            const sorted = Object.entries(pred.all_probabilities)
+                .sort((a, b) => b[1] - a[1]);
+            
+            sorted.forEach(([cls, prob]) => {
+                const color = cls === 'Healthy' ? 'success' : 'warning';
+                const item = document.createElement('div');
+                item.className = 'probability-item';
+                item.innerHTML = `
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>${cls}</span>
+                        <span>${prob.toFixed(2)}%</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-${color}" style="width: ${prob}%"></div>
+                    </div>
+                `;
+                probContainer.appendChild(item);
+            });
+            
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset Button
+        resetBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            resultCard.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

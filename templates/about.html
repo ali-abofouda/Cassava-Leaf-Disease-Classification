@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Cassava Disease Classifier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d5a27;
+            --light-green: #4a7c43;
+            --accent-green: #8bc34a;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+        
+        .info-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .tech-badge {
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin: 5px;
+            display: inline-block;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        footer {
+            background: var(--primary-green);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf me-2"></i>Cassava Disease Classifier
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Home</a>
+                    <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+                    <a class="nav-link active" href="/about"><i class="fas fa-info-circle me-1"></i>About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-info-circle me-3"></i>About This Project
+            </h1>
+            <p class="lead mb-0">
+                Learn more about the Cassava Leaf Disease Classification system
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Stats Row -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">21,397</div>
+                    <div>Training Images</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div>Disease Classes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">84.93%</div>
+                    <div>Accuracy</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">2.2M</div>
+                    <div>Parameters</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Project Overview -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-project-diagram me-2 text-success"></i>Project Overview
+                        </h4>
+                        <p>
+                            This project uses deep learning to automatically classify diseases in cassava leaves.
+                            Cassava is a major food crop in Africa, and early disease detection is crucial for
+                            preventing crop losses and ensuring food security.
+                        </p>
+                        <p>
+                            We trained a MobileNetV2 model using transfer learning on a dataset of over 21,000
+                            images. The model can identify 5 different conditions: 4 diseases and healthy leaves.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Model Architecture -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-brain me-2 text-success"></i>Model Architecture
+                        </h4>
+                        <p>
+                            <strong>Base Model:</strong> MobileNetV2 (pretrained on ImageNet)
+                        </p>
+                        <p>
+                            <strong>Custom Classifier:</strong>
+                        </p>
+                        <ul>
+                            <li>Dropout Layer (0.3)</li>
+                            <li>Fully Connected Layer (1280 → 256)</li>
+                            <li>ReLU Activation</li>
+                            <li>Batch Normalization</li>
+                            <li>Dropout Layer (0.3)</li>
+                            <li>Output Layer (256 → 5 classes)</li>
+                        </ul>
+                        <p>
+                            <strong>Training Configuration:</strong>
+                        </p>
+                        <ul>
+                            <li>Image Size: 224×224</li>
+                            <li>Optimizer: Adam (lr=0.0001)</li>
+                            <li>LR Scheduler: ReduceLROnPlateau</li>
+                            <li>Mixed Precision Training: Enabled</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Disease Information -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-virus me-2 text-success"></i>Disease Information
+                        </h4>
+                        <div class="accordion" id="diseaseAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cbb">
+                                        <strong>CBB - Cassava Bacterial Blight</strong>
+                                    </button>
+                                </h2>
+                                <div id="cbb" class="accordion-collapse collapse show" data-bs-parent="#diseaseAccordion">
+                                    <div class="accordion-body">
+                                        A bacterial disease caused by <em>Xanthomonas axonopodis</em>. Symptoms include
+                                        angular leaf spots, wilting, and gum exudation from stems.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cbsd">
+                                        <strong>CBSD - Cassava Brown Streak Disease</strong>
+                                    </button>
+                                </h2>
+                                <div id="cbsd" class="accordion-collapse collapse" data-bs-parent="#diseaseAccordion">
+                                    <div class="accordion-body">
+                                        A viral disease causing yellow/brown streaks on leaves and stems. It can cause
+                                        severe root necrosis, making the cassava inedible.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cgm">
+                                        <strong>CGM - Cassava Green Mottle</strong>
+                                    </button>
+                                </h2>
+                                <div id="cgm" class="accordion-collapse collapse" data-bs-parent="#diseaseAccordion">
+                                    <div class="accordion-body">
+                                        A viral disease causing chlorotic (yellow-green) mosaic patterns on leaves
+                                        and leaf distortion.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cmd">
+                                        <strong>CMD - Cassava Mosaic Disease</strong>
+                                    </button>
+                                </h2>
+                                <div id="cmd" class="accordion-collapse collapse" data-bs-parent="#diseaseAccordion">
+                                    <div class="accordion-body">
+                                        The most devastating cassava disease in Africa. Causes leaf curling, mosaic
+                                        patterns, and severe yield reduction (up to 100% loss in severe cases).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#healthy">
+                                        <strong>Healthy</strong>
+                                    </button>
+                                </h2>
+                                <div id="healthy" class="accordion-collapse collapse" data-bs-parent="#diseaseAccordion">
+                                    <div class="accordion-body">
+                                        Healthy cassava leaves show no visible disease symptoms. They have uniform
+                                        green coloration and normal leaf structure.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Technologies Used -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-cogs me-2 text-success"></i>Technologies
+                        </h4>
+                        <div class="text-center">
+                            <span class="tech-badge bg-primary text-white">Python</span>
+                            <span class="tech-badge bg-danger text-white">PyTorch</span>
+                            <span class="tech-badge bg-success text-white">Flask</span>
+                            <span class="tech-badge bg-info text-white">MobileNetV2</span>
+                            <span class="tech-badge bg-warning text-dark">NumPy</span>
+                            <span class="tech-badge bg-secondary text-white">Pandas</span>
+                            <span class="tech-badge bg-dark text-white">Bootstrap</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Comparison -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-chart-bar me-2 text-success"></i>Model Comparison
+                        </h4>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>CNN</th>
+                                    <th>MobileNet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Accuracy</td>
+                                    <td>66.31%</td>
+                                    <td><strong>83.83%</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Parameters</td>
+                                    <td>26M</td>
+                                    <td><strong>2.2M</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Test Loss</td>
+                                    <td>0.85</td>
+                                    <td><strong>0.52</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="card info-card">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-link me-2 text-success"></i>Resources
+                        </h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="https://www.kaggle.com/c/cassava-leaf-disease-classification" target="_blank">
+                                    <i class="fab fa-kaggle me-2"></i>Kaggle Competition
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="https://pytorch.org/vision/stable/models/mobilenetv2.html" target="_blank">
+                                    <i class="fas fa-book me-2"></i>MobileNetV2 Docs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-leaf me-2"></i>Cassava Leaf Disease Classification
+            </p>
+            <small>Powered by PyTorch & MobileNetV2</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
