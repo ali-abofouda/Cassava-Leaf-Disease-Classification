@@ -529,7 +529,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Ali Abofouda**
 
 - GitHub: [@ali-abofouda](https://github.com/ali-abofouda)
-- LinkedIn: [Ali Abofouda](https://linkedin.com/in/ali-abofouda)
+- LinkedIn: [Ali Ashraf](https://www.linkedin.com/in/ali-ashraf-8b619b22a/)
 
 ---
 
