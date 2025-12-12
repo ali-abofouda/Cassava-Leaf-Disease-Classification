@@ -197,38 +197,79 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    """Handle image upload and prediction."""
+    """Handle single or multiple image upload and prediction."""
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
     
-    file = request.files['file']
+    files = request.files.getlist('file')
     
-    if file.filename == '':
+    if not files or all(f.filename == '' for f in files):
         return jsonify({'error': 'No file selected'}), 400
     
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file type. Please upload PNG, JPG, or JPEG.'}), 400
+    results = []
     
-    try:
-        # Read and process image
-        image = Image.open(file.stream).convert('RGB')
+    for file in files:
+        if file.filename == '':
+            continue
+            
+        if not allowed_file(file.filename):
+            results.append({
+                'filename': file.filename,
+                'error': 'Invalid file type. Please upload PNG, JPG, or JPEG.',
+                'success': False
+            })
+            continue
         
-        # Make prediction
-        result = predict_image(image)
+        try:
+            # Read and process image
+            image = Image.open(file.stream).convert('RGB')
+            
+            # Make prediction
+            result = predict_image(image)
+            
+            # Convert image to base64 for display
+            buffered = io.BytesIO()
+            # Resize for thumbnail
+            thumb = image.copy()
+            thumb.thumbnail((400, 400))
+            thumb.save(buffered, format="JPEG", quality=85)
+            img_base64 = base64.b64encode(buffered.getvalue()).decode()
+            
+            results.append({
+                'filename': secure_filename(file.filename),
+                'success': True,
+                'prediction': result,
+                'image': f'data:image/jpeg;base64,{img_base64}'
+            })
         
-        # Convert image to base64 for display
-        buffered = io.BytesIO()
-        image.save(buffered, format="JPEG")
-        img_base64 = base64.b64encode(buffered.getvalue()).decode()
-        
-        return jsonify({
-            'success': True,
-            'prediction': result,
-            'image': f'data:image/jpeg;base64,{img_base64}'
-        })
+        except Exception as e:
+            results.append({
+                'filename': file.filename,
+                'error': str(e),
+                'success': False
+            })
     
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # Return single result for backward compatibility if only one file
+    if len(results) == 1:
+        if results[0]['success']:
+            return jsonify({
+                'success': True,
+                'prediction': results[0]['prediction'],
+                'image': results[0]['image'],
+                'filename': results[0]['filename']
+            })
+        else:
+            return jsonify({'error': results[0]['error']}), 400
+    
+    # Return batch results
+    return jsonify({
+        'success': True,
+        'batch': True,
+        'results': results,
+        'total': len(results),
+        'successful': sum(1 for r in results if r['success']),
+        'failed': sum(1 for r in results if not r['success'])
+    })
 
 
 @app.route('/dashboard')
